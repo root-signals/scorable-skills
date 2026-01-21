@@ -1,0 +1,11 @@
+# AI Assistant Tool Directories
+.agent/
+.agents/
+.claude/
+.codex/
+.cursor/
+.gemini/
+.kiro/
+
+# Packaged skill files (build artifacts)
+*.skill
