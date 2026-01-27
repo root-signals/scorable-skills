@@ -91,6 +91,13 @@ if random.random() < 0.1:  # 10% sampling
 
 See https://docs.scorable.ai/usage/cookbooks/batch-evaluation
 
+
+### Optional parameters for execute call. Use ONLY if relevant to the evaluation.
+- \`contexts\` parameter: If a RAG setup is used, a list of retrieved context snippets ["context snippet 1", "context snippet 2"] to evaluate the response against (optional)
+- \`user_id\` parameter: The user id of the user who is interacting with the application (optional)
+- \`tags\` parameter: Tag the evaluation for easier filtering and analysis, like production, development (optional)
+- \`expected_output\` parameter: The expected output of the response (optional)
+
 ## Integration Points
 
 - Insert evaluation code where LLM outputs are generated (e.g., after OpenAI response calls)
