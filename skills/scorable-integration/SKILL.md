@@ -45,6 +45,7 @@ Response includes `api_key` field. Warn the user appropriately that:
 - The judge will be public and visible to everyone
 - The key only works for a limited time
 - For private judges, they should create a permanent key at https://scorable.ai/register
+- Remember also the \`api_token\` field. It is used in the URL parameters for the judge URL, not in any other context.
 
 ### Step 3: Generate a Judge
 
@@ -68,7 +69,7 @@ curl --request POST \
   --header 'content-type: application/json' \
   --header 'Authorization: Api-Key <SCORABLE_API_KEY>' \
   --data '{
-    "visibility": "unlisted",
+    "visibility": "unlisted", # or public if using a temporary key
     "intent": "An email automation system that creates summary emails using an LLM based on database query results and user input. Evaluate the LLM output for: accuracy in summarizing data, appropriate tone for the audience, inclusion of all key information from queries, proper formatting, and absence of hallucinations. The system is used for customer-facing communications.",
     "generating_model_params": {
       "temperature": 0.2,
@@ -168,7 +169,7 @@ After integration:
 
 3. **Provide judge details**:
    - Judge URL: `https://scorable.ai/judge/{judge_id}`
-   - If temporary key was used: `https://scorable.ai/judge/{judge_id}?token={base64_encoded_temporary_key}`
+   - If you used a temporary key, you must include its counterpart api_token base64 encoded in the url as a query parameter: `https://scorable.ai/judge/{judge_id}?token={base64 encoded temporary api_token}`
    - How to view results in the Scorable dashboard: https://scorable.ai/dashboard
    - If temporary key was used, note that it only works for a limited time and they should create an account with a permanent key
 

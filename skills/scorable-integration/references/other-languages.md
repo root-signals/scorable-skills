@@ -32,10 +32,16 @@ curl 'https://api.scorable.ai/v1/judges/{judge_id}/execute/' \
 }
 ```
 
+### Optional parameters for execute call. Use ONLY if relevant to the evaluation.
+- \`contexts\` parameter: If a RAG setup is used, a list of retrieved context snippets ["context snippet 1", "context snippet 2"] to evaluate the response against (optional)
+- \`user_id\` parameter: The user id of the user who is interacting with the application (optional)
+- \`tags\` parameter: Tag the evaluation for easier filtering and analysis, like production, development (optional)
+- \`expected_output\` parameter: The expected output of the response (optional)
+
 Each evaluator returns:
 - `score`: Float between 0-1 (higher is better)
 - `justification`: Natural language explanation
 
 ## Adapting to Your Language
 
-Use this template with your language's HTTP client library (e.g., `requests` in Python, `fetch` in JavaScript, `http` in Go, etc.).
+Use this template with your language's HTTP client library

@@ -9,7 +9,7 @@ Skills for integrating and using [Scorable](https://scorable.ai) LLM-as-a-Judge 
 ## Installation
 
 ```bash
-npx add-skill root-signals/scorable-skills
+npx skills add root-signals/scorable-skills
 ```
 
 ## Usage
