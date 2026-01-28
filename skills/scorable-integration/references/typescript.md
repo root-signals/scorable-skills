@@ -60,6 +60,23 @@ const result = await client.judges.execute(
 );
 ```
 
+#### RAG (Retrieval Augmented Generation)
+
+**If you identify the application uses RAG (Retrieval Augmented Generation)**, you MUST include the `contexts` parameter.
+
+```typescript
+const result = await client.judges.execute(
+  "judge-id-here",
+  {
+    request: "User question",
+    response: "LLM response",
+    contexts: ["retrieved doc 1", "retrieved doc 2", ...], // REQUIRED for RAG
+  }
+);
+```
+
+Contexts parameter is available in all SDKs and in the API.
+
 ### Optional parameters for execute call. Use ONLY if relevant to the evaluation.
 - \`contexts\` parameter: If a RAG setup is used, a list of retrieved context snippets ["context snippet 1", "context snippet 2"] to evaluate the response against (optional)
 - \`user_id\` parameter: The user id of the user who is interacting with the application (optional)
