@@ -32,6 +32,17 @@ curl 'https://api.scorable.ai/v1/judges/{judge_id}/execute/' \
 }
 ```
 
+#### RAG (Retrieval Augmented Generation)
+
+**If you identify the application uses RAG (Retrieval Augmented Generation)**, you MUST include the `contexts` parameter.
+
+```bash
+curl 'https://api.scorable.ai/v1/judges/{judge_id}/execute/' \
+  -H 'authorization: Api-Key your-api-key' \
+  -H 'content-type: application/json' \
+  --data-raw '{"response":"LLM output here","request":"User input here","contexts":["retrieved doc 1", "retrieved doc 2", ...]}'
+```
+
 ### Optional parameters for execute call. Use ONLY if relevant to the evaluation.
 - \`contexts\` parameter: If a RAG setup is used, a list of retrieved context snippets ["context snippet 1", "context snippet 2"] to evaluate the response against (optional)
 - \`user_id\` parameter: The user id of the user who is interacting with the application (optional)
