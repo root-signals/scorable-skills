@@ -157,7 +157,7 @@ Choose the appropriate integration guide based on the codebase language:
 - Use actual variables from your code, not static strings
 #### Multi-Turn / Agent + Tool Calls evaluation
 
-If a multi-turn conversation is detected, use the Messages/multi-turn format to evaluate the entire conversation flow. This may also include tool calls. Confirm from user if multi-turn evaluation would suit their needs. See language-specific guides for details.
+If a multi-turn conversation is detected, use the multi-turn format to evaluate the entire conversation flow. This may also include tool calls. Confirm from user if multi-turn evaluation would suit their needs. See language-specific guides for details.
 
 ### Step 5: Provide Next Steps
 

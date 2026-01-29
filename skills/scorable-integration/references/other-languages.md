@@ -2,13 +2,46 @@
 
 For languages without an official SDK, use the REST API directly via HTTP requests.
 
-## cURL Template
+## cURL Template (simple)
 
 ```bash
 curl 'https://api.scorable.ai/v1/judges/{judge_id}/execute/' \
   -H 'authorization: Api-Key your-api-key' \
   -H 'content-type: application/json' \
   --data-raw '{"response":"LLM output here","request":"User input here"}'
+```
+
+## cURL Template (multi-turn)
+
+```bash
+curl 'https://api.scorable.ai/v1/judges/{judge_id}/execute/' \
+  -H 'authorization: Api-Key your-api-key' \
+  -H 'content-type: application/json' \
+  --data-raw '{
+  "turns": [
+    {
+      "role": "user",
+      "content": "Hello, I need help with my order"
+    },
+    {
+      "role": "assistant",
+      "content": "I'\''d be happy to help! What'\''s your order number?"
+    },
+    {
+      "role": "user",
+      "content": "It'\''s ORDER-12345"
+    },
+    {
+      "role": "assistant",
+      "content": "{\"order_number\": \"ORDER-12345\", \"status\": \"shipped\", \"eta\": \"Jan 20\"}",
+      "tool_name": "order_lookup"
+    },
+    {
+      "role": "assistant",
+      "content": "I found your order. It is currently in transit and should arrive by Jan 20."
+    }
+  ]
+}'
 ```
 
 ## Integration Points

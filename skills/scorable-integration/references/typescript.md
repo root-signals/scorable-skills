@@ -31,32 +31,31 @@ console.log(result.evaluator_results[0].justification);
 ```typescript
 const result = await client.judges.execute(
   "judge-id-here",
-  messages: {
-      target: 'agent_behavior', // or 'user_behavior'
-      turns: [
-        {
-          role: 'user',
-          content: 'Hello, I need help with my order'
-        },
-        {
-          role: 'assistant',
-          content: "I'd be happy to help! What's your order number?"
-        },
-        {
-          role: 'user',
-          content: "It's ORDER-12345"
-        },
-        {
-          role: 'assistant',
-          content: "{'order_number': 'ORDER-12345', 'status': 'shipped', 'eta': 'Jan 20'}",
-          tool_name: 'order_lookup' // Optional: name of tool used
-        },
-        {
-          role: 'assistant',
-          content: 'I found your order. It is currently in transit and should arrive by Jan 20.'
-        }
-      ]
-    },
+  {
+    turns: [
+      {
+        role: 'user',
+        content: 'Hello, I need help with my order'
+      },
+      {
+        role: 'assistant',
+        content: "I'd be happy to help! What's your order number?"
+      },
+      {
+        role: 'user',
+        content: "It's ORDER-12345"
+      },
+      {
+        role: 'assistant',
+        content: JSON.stringify({order_number: 'ORDER-12345', status: 'shipped', eta: 'Jan 20'}),
+        tool_name: 'order_lookup' // Optional: name of tool used
+      },
+      {
+        role: 'assistant',
+        content: 'I found your order. It is currently in transit and should arrive by Jan 20.'
+      }
+    ]
+  }
 );
 ```
 
