@@ -43,27 +43,25 @@ result = await client.judges.arun(
 For evaluating entire conversation flows:
 
 ```python
-from scorable import Scorable, Messages, Turn, Target
+from scorable import Scorable
+from scorable.multiturn import Turn
 
 client = Scorable(api_key="your-api-key")
-messages = Messages(
-    target=Target.AGENT_BEHAVIOR,
-    turns=[
-        Turn(role="user", content="Hello, I need help with my order"),
-        Turn(role="assistant", content="I'd be happy to help! What's your order number?"),
-        Turn(role="user", content="It's ORDER-12345"),
-        Turn(
-            role="assistant",
-            content="{'order_number': 'ORDER-12345', 'status': 'shipped', 'eta': 'Jan 20'}",
-            tool_name="order_lookup",
-        ),
-        Turn(
-            role="assistant",
-            content="I found your order. It's currently in transit.",
-        ),
-    ],
-)
-result = client.judges.run(judge_id="judge-id-here", messages=messages)
+turns=[
+    Turn(role="user", content="Hello, I need help with my order"),
+    Turn(role="assistant", content="I'd be happy to help! What's your order number?"),
+    Turn(role="user", content="It's ORDER-12345"),
+    Turn(
+        role="assistant",
+        content="{'order_number': 'ORDER-12345', 'status': 'shipped', 'eta': 'Jan 20'}",
+        tool_name="order_lookup",
+    ),
+    Turn(
+        role="assistant",
+        content="I found your order. It's currently in transit.",
+    )
+]
+result = client.judges.run(judge_id="judge-id-here", turns=turns)
 ```
 
 #### RAG (Retrieval Augmented Generation)
