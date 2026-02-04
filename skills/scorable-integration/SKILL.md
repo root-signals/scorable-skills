@@ -12,25 +12,24 @@ Scorable is a tool for creating LLM-as-a-Judge based evaluators for safeguarding
 
 Your role is to:
 1. **Analyze the codebase** to identify LLM interactions
-2. **Create judges via Scorable API** to evaluate those interactions
+2. **Create judges via Scorable API** to evaluate those interactions (or use an existing judge ID if provided)
 3. **Integrate judge execution** into the code at appropriate points
 4. **Provide usage documentation** for the evaluation setup
 
-## Workflow
+**Note:** These instructions work for both creating new judges from scratch and integrating existing judges. If the user provides a judge ID, you can skip the judge creation step (Step 3) and proceed directly to integration (Step 4).
 
-### Step 0: Explain the Process
+## Step 0: Explain the process
 
 Before performing any analysis or technical steps, pause and clearly brief the user on what is about to happen.
-
 Explain that you will:
 - Analyze the codebase to identify LLM interactions
 - Create judges via Scorable API to evaluate those interactions
 - Integrate judge execution into the code at appropriate points
 - Provide usage documentation for the evaluation setup
 
-Render this nicely in the terminal output so the user can easily follow along.
+---
 
-### Step 1: Analyze the Application
+## Step 1: Analyze the Application
 
 Examine the codebase to understand:
 - What LLM interactions exist (prompts, completions, agent calls)
@@ -39,13 +38,25 @@ Examine the codebase to understand:
 
 If multiple LLM interactions exist, help the user prioritize. Recommend starting with the most critical one first.
 
-### Step 2: Get Scorable API Key
+---
 
-Ask the user if they want to:
-- **Create a temporary API key** (for quick testing) - Warn that the judge will be public and visible to everyone
-- **Use an existing API key** (for production)
+## Step 2: Get Scorable API Key
 
-#### To create a temporary API key:
+Ask the user which option they prefer:
+
+### Option A: Permanent API Key (Recommended)
+
+Direct them to: https://scorable.ai/api-key-setup
+1. Sign in with SSO or email/password
+2. Click "Create API Key"
+3. Copy the key and ask them to store it to .env, environment variable
+
+
+**Security:** Instruct the user to use environment variables or the project's secret management. Use existing `.env` files if available or ask user to save it as environment variable. Do not ask the user to paste the key into this session.
+
+---
+
+### Option B: Temporary API Key (Testing Only)
 
 ```bash
 curl --request POST      --url https://api.scorable.ai/create-demo-user/      --header 'accept: application/json'      --header 'content-type: application/json'
@@ -54,26 +65,31 @@ curl --request POST      --url https://api.scorable.ai/create-demo-user/      --
 Response includes `api_key` field. Warn the user appropriately that:
 - The judge will be public and visible to everyone
 - The key only works for a limited time
-- For private judges, they should create a permanent key at https://scorable.ai/register
+- For private judges, they should create a permanent key
 
 Remember also the `api_token` field. It is used in the URL parameters for the judge URL, not in any other context.
 
-If user wants a permanent key and doesn't have an account, direct them to https://scorable.ai/register.
+---
 
-### Step 3: Generate a Judge
+### Option C: Existing API Key
 
-Call `/v1/judges/generate/` with a detailed `intent` string describing what to evaluate.
+If they have an account: https://scorable.ai/settings/api-keys
 
-#### Intent String Guidelines
+---
 
+## Step 3: Generate a Judge
+
+**Note:** If the user has already provided a judge ID (e.g., in their message), you can skip this step and proceed directly to Step 4 (Integration).
+
+Call the `/v1/judges/generate/` endpoint with a detailed `intent` string.
+
+### Intent String Guidelines:
 - Describe the application context and what you're evaluating
 - Mention the specific execution point (stage name)
 - Include critical quality dimensions you care about
 - Add examples, documentation links, mandatory tool calls, or policies if relevant
 - Be specific and detailed (multiple sentences/paragraphs are good)
 - Code level details like frameworks, libraries, etc. do not need to be mentioned
-
-#### Example Request
 
 **Example with all required fields filled:**
 ```bash
@@ -92,11 +108,16 @@ curl --request POST \
   }'
 ```
 
-**Note:** This can take up to 2 minutes to complete.
+**Optional fields:**
+- `enable_context_aware_evaluators`: Set to true if the application interaction uses RAG (document chunks) that are relevant and can be extracted to the evaluation (hallucinations, context drift, etc.).
 
-#### Handling API Responses
+Note that this can take up to 2 minutes to complete.
 
-**1. `missing_context_from_system_goal` - Additional context needed:**
+### Handling API Responses:
+
+The API may return:
+
+**1. `missing_context_from_system_goal`** - Additional context needed:
 ```json
 {
   "missing_context_from_system_goal": [
@@ -107,19 +128,19 @@ curl --request POST \
   ]
 }
 ```
-→ Ask the user for these details (if not evident from the codebase), then call `/v1/judges/generate/` again with:
-
+→ Ask the user for these details (if not evident from the code base), then call `/v1/judges/generate/` again with:
 ```json
 {
   "judge_id": "existing-judge-id",
   "stage": "Stage name",
   "extra_contexts": {
     "target_audience": "Enterprise customers"
-  }
+  },
+  ...other fields...
 }
 ```
 
-**2. `multiple_stages` - Judge detected multiple evaluation points:**
+**2. `multiple_stages`** - Judge detected multiple evaluation points:
 ```json
 {
   "error_code": "multiple_stages",
@@ -128,7 +149,7 @@ curl --request POST \
 ```
 → Ask the user which stage to focus on, or if they have a custom stage name. Each judge evaluates one stage. You can create additional judges later for other stages.
 
-**3. Success - Judge created:**
+**3. Success** - Judge created:
 ```json
 {
   "judge_id": "abc123...",
@@ -137,11 +158,13 @@ curl --request POST \
 ```
 → Proceed to integration.
 
-### Step 4: Integrate Judge Execution
+---
+
+## Step 4: Integrate Judge Execution
 
 Add code to evaluate LLM outputs at the appropriate execution point(s).
 
-#### Language-Specific Integration
+### Language-Specific Integration
 
 Choose the appropriate integration guide based on the codebase language:
 
@@ -149,45 +172,45 @@ Choose the appropriate integration guide based on the codebase language:
 - **TypeScript/JavaScript**: See [references/typescript.md](references/typescript.md) for npm installation and usage examples
 - **Other languages**: See [references/other-languages.md](references/other-languages.md) for REST API integration via cURL template
 
-#### Integration Points
+### Integration Points
 
 - Insert evaluation code where LLM outputs are generated (for example after an OpenAI responses call)
 - `response` parameter: The text you want to evaluate (required)
 - `request` parameter: The input that prompted the response (optional but recommended)
 - Use actual variables from your code, not static strings
-#### Multi-Turn / Agent + Tool Calls evaluation
+
+### Multi-Turn / Agent + Tool Calls evaluation
 
 If a multi-turn conversation is detected, use the multi-turn format to evaluate the entire conversation flow. This may also include tool calls. Confirm from user if multi-turn evaluation would suit their needs. See language-specific guides for details.
 
-### Step 5: Provide Next Steps
+---
+
+## Step 5: Provide Next Steps
 
 After integration:
 
 1. **Ask about additional judges**: If multiple stages were identified, ask if the user wants to create judges for other stages
-
 2. **Discuss evaluation strategy**:
    - Should every LLM call be evaluated or sampled (e.g., 10%)?
    - Should scores be stored in a database for analysis?
    - Should specific actions trigger based on scores (e.g., alerts for low scores)?
    - Batch evaluation vs real-time evaluation?
-
 3. **Provide judge details**:
    - Judge URL: `https://scorable.ai/judge/{judge_id}`
-     - If you used a temporary key, you must include its counterpart api_token base64 encoded in the url as a query parameter: `https://scorable.ai/judge/{judge_id}?token={base64 encoded temporary api_token}`
-   - How to view results in the Scorable dashboard: https://scorable.ai/dashboard
-   - If temporary key was used, note that it only works for a limited time and they should create an account with a permanent key
-
+     - If you used a temporary key, you must include its counterpart api_token base64 encoded in the url as a query parameter: https://scorable.ai/judge/{judge_id}?token={base64 encoded temporary api_token}
+   - How to view results in the Scorable dashboard (https://scorable.ai/dashboard)
+   - If temporary key was used, a note that it only works for a certain amount of time and they should create an account with a permanent key
 4. **Link to docs**: https://docs.scorable.ai
    - For agentic workflows with tool calls or multi-turn conversations, link to https://docs.scorable.ai/usage/usage/judges#multi-turn-conversations
 
+---
+
 ## Key Implementation Notes
 
-- **Install SDK first**: Check which dependency management system is used and install the appropriate package
+- **Install SDK first**: Check which dependency management system is used and install the appropriate package.
 - **Store API keys securely**: Use environment variables, not hardcoded strings
 - **Handle errors gracefully**: Evaluation failures shouldn't break your application
 - **Start simple**: Evaluate one stage first, then expand
 - **Sampling for production**: 5-10% sampling reduces costs while maintaining visibility
 - **Non-blocking**: The evaluation should not block the main thread and not slow down the application
-
 - **Common patterns**: See language-specific reference files for integration patterns (development, production sampling, batch evaluation)
-
