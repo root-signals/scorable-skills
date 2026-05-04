@@ -4,7 +4,8 @@ Skills for integrating and using [Scorable](https://scorable.ai) LLM-as-a-Judge 
 
 ## What these skills do
 
-- [scorable-integration](skills/scorable-integration/SKILL.md): Guides you through integrating Scorable LLM-as-a-Judge evaluators into your codebase.
+- [scorable-integration](skills/scorable-integration/SKILL.md): Guides you through integrating Scorable LLM-as-a-Judge evaluators into your codebase via direct API calls.
+- [scorable-otel-evaluation](skills/scorable-otel-evaluation/SKILL.md): Wires end-to-end OpenTelemetry tracing for an LLM application, ships traces to Scorable, and configures server-side evaluation filters that auto-score matching traces. Use when you want production observability + auto-evaluation rather than per-call SDK integration.
 
 ## Installation
 
@@ -36,6 +37,15 @@ Analyze my codebase for LLM interactions and help me set up Scorable evaluation
 **Production deployment:**
 ```
 Set up production sampling for Scorable evaluation with 10% coverage
+```
+
+**OTEL-based tracing + evaluation:**
+```
+Add OTEL tracing to my pydantic-ai agent and auto-evaluate every trace with Scorable
+```
+
+```
+Instrument my OpenAI agent with OpenInference and create a filter that scores production traffic
 ```
 
 
