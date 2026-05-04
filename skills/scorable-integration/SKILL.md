@@ -8,6 +8,19 @@ description: Integrate Scorable LLM-as-a-Judge evaluators into applications with
 These instructions guide you through creating LLM evaluation judges with Scorable and integrating them into your codebase.
 Scorable is a tool for creating LLM-as-a-Judge based evaluators for safeguarding applications. Judge is the Scorable term for grouping evaluations from different metrics (Helpfulness, Policy Adherence, etc...)
 
+## Execution Contract
+
+You are responsible for completing Scorable setup and integration end-to-end in as few turns as possible.
+
+- You MUST analyze the codebase for LLM interaction points.
+- You MUST install and use Scorable CLI directly.
+- You MUST execute judge generation commands yourself.
+- You MUST integrate judge execution into code yourself.
+- You MUST run verification checks after changes.
+- You MUST update project documentation for usage.
+- You MUST NOT delegate technical steps to the user except where explicitly required like setting up the API key if not using a temporary key.
+- You MUST continue until implementation is complete or a hard blocker is reached.
+
 ## Overview
 
 Your role is to:
@@ -180,7 +193,7 @@ scorable judge generate \
 
 ## Step 4: Integrate Judge Execution
 
-Add code to evaluate LLM outputs at the appropriate execution point(s).
+Add code to evaluate LLM outputs at the appropriate execution point(s). If the codebase is using a framework, check if there are integration instructions in Scorable docs (using curl is enough): https://docs.scorable.ai/llms.txt
 
 ### Language-Specific Integration
 
@@ -200,6 +213,10 @@ Choose the appropriate integration guide based on the codebase language:
 ### Multi-Turn / Agent + Tool Calls evaluation
 
 If a multi-turn conversation is detected, use the multi-turn format to evaluate the entire conversation flow. This may also include tool calls. Confirm from user if multi-turn evaluation would suit their needs. See language-specific guides for details.
+
+### RAG, optional parameters, and result format
+
+If the application uses RAG, you MUST pass a `contexts` parameter to the judge run. Optional parameters (`user_id`, `tags`, `expected_output`) and the exact result shape are documented in the language-specific reference files linked above.
 
 ---
 
