@@ -111,6 +111,8 @@ Or use an environment variable:
 export SCORABLE_API_KEY="sk-your-api-key"
 ```
 
+**Projects:** Resources you create land in the org's default project automatically. Don't pass `--project-id` unless the user explicitly asks to scope a specific project.
+
 ---
 
 ## Step 3: Generate a Judge
